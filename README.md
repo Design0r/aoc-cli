@@ -1,16 +1,20 @@
 # Advent of Code CLI
 
-A CLI written in Python to Download new Advent of Code Puzzles and Submit your Solutions.
+A CLI written in Python to Download Advent of Code Puzzles and Submit your Solutions.
 
 ## Installation
-
+### Option 1
 1. Clone the Repo
-2. pip install the cli
+2. Install the cli
 
 ```shell
-
 cd aoc-cli
 pip install .
+```
+### Option 2
+1. Directly install from GitHub
+```shell
+pip install git+https://github.com/Design0r/aoc-cli.git
 ```
 
 ## Usage
