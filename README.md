@@ -17,33 +17,33 @@ pip install .
 
 1. Set yout Advent of code Session Cookie
 
-```shell
-aoc cookie <Your Cookie>
-```
+   ```shell
+   aoc cookie <Your Cookie>
+   ```
 
 2. Dowload a Puzzle
 
-```shell
-aoc download <Path> --day <Day> --year <Year>
-```
+   ```shell
+   aoc download <Path> --day <Day> --year <Year>
+   ```
 
 - Example:
 
-```shell
-aoc download advent-of-code/ --day 1 --year 2023
-```
+  ```shell
+  aoc download advent-of-code/ --day 1 --year 2023
+  ```
 
 3. Submit your Solution
 
-```shell
-aoc submit <Solution> --day <Day> --year <Year> --part <Part>
-```
+   ```shell
+   aoc submit <Solution> --day <Day> --year <Year> --part <Part>
+   ```
 
 - Example:
 
-```shell
-aoc submit 9823 --day 1 --year 2023 --part 1
-```
+  ```shell
+  aoc submit 9823 --day 1 --year 2023 --part 1
+  ```
 
 4. Further Help
 
