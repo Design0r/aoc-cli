@@ -1,0 +1,8 @@
+[project]
+name = "aoc-cli"
+version = "0.1.0"
+dependencies = ["httpx"]
+
+[project.scripts]
+aoc = "aoc_cli.main:main"
+
