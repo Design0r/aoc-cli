@@ -182,7 +182,7 @@ def submit_solution(args: Namespace) -> None:
 
 def create_project_structure(args: Namespace, input_text: str) -> None:
     base_path = Path(args.path)
-    base_path.mkdir(exist_ok=True)
+    base_path.mkdir(exist_ok=True, parents=True)
     input_path = base_path / "inputs"
     sample_path = base_path / "samples"
     src_path = base_path / "src"
