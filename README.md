@@ -7,11 +7,11 @@ A CLI written in Python to Download new Advent of Code Puzzles and Submit your S
 1. Clone the Repo
 2. pip install the cli
 
-   ```shell
+```shell
 
-   cd aoc-cli
-   pip install .
-   ```
+cd aoc-cli
+pip install .
+```
 
 ## Usage
 
@@ -27,7 +27,7 @@ aoc cookie <Your Cookie>
 aoc download <Path> --day <Day> --year <Year>
 ```
 
-    Example:
+- Example:
 
 ```shell
 aoc download advent-of-code/ --day 1 --year 2023
@@ -39,7 +39,7 @@ aoc download advent-of-code/ --day 1 --year 2023
 aoc submit <Solution> --day <Day> --year <Year> --part <Part>
 ```
 
-    Example:
+- Example:
 
 ```shell
 aoc submit 9823 --day 1 --year 2023 --part 1
