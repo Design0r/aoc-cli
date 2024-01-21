@@ -47,6 +47,6 @@ pip install .
 
 4. Further Help
 
-```shell
-aoc --help
-```
+   ```shell
+   aoc --help
+   ```
