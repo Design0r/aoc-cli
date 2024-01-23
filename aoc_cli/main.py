@@ -1,8 +1,10 @@
 from argparse import ArgumentParser, Namespace
 from datetime import datetime
-from pathlib import Path
-import httpx
 from html.parser import HTMLParser
+from pathlib import Path
+from typing import override
+
+import httpx
 
 
 class ArticleParser(HTMLParser):
@@ -11,15 +13,18 @@ class ArticleParser(HTMLParser):
         self.is_article = False
         self.article_content = []
 
-    def handle_starttag(self, tag, attrs):
+    @override
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]):
         if tag == "article":
             self.is_article = True
 
-    def handle_endtag(self, tag):
+    @override
+    def handle_endtag(self, tag: str):
         if tag == "article":
             self.is_article = False
 
-    def handle_data(self, data):
+    @override
+    def handle_data(self, data: str):
         if self.is_article:
             self.article_content.append(data)
 
@@ -36,66 +41,36 @@ def parse_args() -> Namespace:
     latest_aoc_year = get_latest_aoc_year()
 
     parser = ArgumentParser()
-    subparsers = parser.add_subparsers(dest="command")
+    command = parser.add_subparsers(dest="command")
 
-    download_parser = subparsers.add_parser(
-        "download", help="Download an Advent of Code Puzzle"
-    )
-    download_parser.add_argument(
-        "path",
-        type=str,
-        help="The Path in which the inputs and samples will be created",
-    )
-    download_parser.add_argument(
-        "-d",
-        "--day",
-        required=True,
-        type=int,
-        help="The Advent of Code day to download, a number between 1 and 25",
-    )
-    download_parser.add_argument(
-        "-y",
-        "--year",
-        type=int,
-        default=latest_aoc_year,
-        help=f"The Advent of Code year to download from, a number between 2015 and {latest_aoc_year}",
-    )
+    download = command.add_parser("download", help="Download an Advent of Code Puzzle")
 
-    submit_parser = subparsers.add_parser(
-        "submit", help="Submit your solution to Advent of Code"
-    )
-    submit_parser.add_argument("solution", type=int, help="The solution to submit")
-    submit_parser.add_argument(
-        "-d",
-        "--day",
-        required=True,
-        type=int,
-        help="The Advent of Code day to submit, a number between 1 and 25",
-    )
-    submit_parser.add_argument(
-        "-y",
-        "--year",
-        type=int,
-        default=latest_aoc_year,
-        help=f"The Advent of Code year to submit to, a number between 2015 and {latest_aoc_year}",
-    )
-    submit_parser.add_argument(
-        "-p",
-        "--part",
-        required=True,
-        type=int,
-        help="The Advent of Code part you want to submit. Number 1 or 2",
-    )
+    help = "The Path in which the inputs and samples will be created"
+    download.add_argument("path", type=str, help=help)
 
-    cookie_parser = subparsers.add_parser(
-        "cookie", help="Set and get your Advent of Code Session Cookie"
-    )
-    cookie_parser.add_argument(
-        "cookie",
-        type=str,
-        nargs="?",
-        help="set your session Cookie, if empty prints your active one",
-    )
+    help = "The Advent of Code day to download, a number between 1 and 25"
+    download.add_argument("-d", "--day", required=True, type=int, help=help)
+
+    help = f"The Advent of Code year to download from, a number between 2015 and {latest_aoc_year}"
+    download.add_argument("-y", "--year", type=int, default=latest_aoc_year, help=help)
+
+    submit = command.add_parser("submit", help="Submit your solution to Advent of Code")
+    submit.add_argument("solution", type=int, help="The solution to submit")
+
+    help = "The Advent of Code day to submit, a number between 1 and 25"
+    submit.add_argument("-d", "--day", required=True, type=int, help=help)
+
+    help = f"The Advent of Code year to submit to, a number between 2015 and {latest_aoc_year}"
+    submit.add_argument("-y", "--year", type=int, default=latest_aoc_year, help=help)
+
+    help = "The Advent of Code part you want to submit. Number 1 or 2"
+    submit.add_argument("-p", "--part", required=True, type=int, help=help)
+
+    help = "Set and get your Advent of Code Session Cookie"
+    cookie = command.add_parser("cookie", help=help)
+
+    help = "set your session Cookie, if empty prints your active one"
+    cookie.add_argument("cookie", type=str, nargs="?", help=help)
 
     return parser.parse_args()
 
@@ -109,30 +84,25 @@ def check_args(args: Namespace):
     latest_aoc_year = get_latest_aoc_year()
     if args.command == "download":
         check(args.day <= 25, f"Expected a Day between 1 and 25, got: {args.day}")
-        check(
-            2015 <= args.year <= latest_aoc_year,
-            f"Expected a Year between 2015 and {latest_aoc_year}, got: {args.year}",
-        )
+
+        error = f"Expected a Year between 2015 and {latest_aoc_year}, got: {args.year}"
+        check(2015 <= args.year <= latest_aoc_year, error)
 
     elif args.command == "submit":
-        check(
-            args.part
-            in {
-                1,
-                2,
-            },
-            f"Expected Part Number to be 1 or 2, got: {args.part}",
-        )
-        check(args.day <= 25, f"Expected a Day between 1 and 25, got: {args.day}")
-        check(
-            2015 <= args.year <= latest_aoc_year,
-            f"Expected a Year between 2015 and {latest_aoc_year}, got: {args.year}",
-        )
+        error = f"Expected Part Number to be 1 or 2, got: {args.part}"
+        check(args.part in {1, 2}, error)
+
+        error = f"Expected a Day between 1 and 25, got: {args.day}"
+        check(args.day <= 25, error)
+
+        error = f"Expected a Year between 2015 and {latest_aoc_year}, got: {args.year}"
+        check(2015 <= args.year <= latest_aoc_year, error)
 
 
 def get_cookie() -> dict[str, str]:
     path = Path(__file__).parent / "cookies.txt"
     path.touch(exist_ok=True)
+
     with open(path, "r", encoding="utf-8") as f:
         content = f.read().strip()
 
@@ -161,11 +131,10 @@ def set_cookie(args: Namespace) -> str:
 
 def get_input(args: Namespace) -> str:
     url = f"http://adventofcode.com/{args.year}/day/{args.day}/input"
-    response = httpx.get(
-        url,
-        cookies=get_cookie(),
-        follow_redirects=True,
-    )
+    try:
+        response = httpx.get(url, cookies=get_cookie(), follow_redirects=True)
+    except Exception as e:
+        raise SystemExit(e)
 
     return response.text
 
@@ -173,16 +142,21 @@ def get_input(args: Namespace) -> str:
 def submit_solution(args: Namespace) -> None:
     data = {"level": args.part, "answer": args.solution}
     url = f"https://adventofcode.com/{args.year}/day/{args.day}/answer"
-    r = httpx.post(url, data=data, cookies=get_cookie())
+    try:
+        r = httpx.post(url, data=data, cookies=get_cookie())
+    except Exception as e:
+        raise SystemExit(e)
 
     parser = ArticleParser()
     parser.feed(r.text)
     print("".join(parser.article_content).strip())
+    parser.close()
 
 
 def create_project_structure(args: Namespace, input_text: str) -> None:
     base_path = Path(args.path)
     base_path.mkdir(exist_ok=True, parents=True)
+
     input_path = base_path / "inputs"
     sample_path = base_path / "samples"
     src_path = base_path / "src"
